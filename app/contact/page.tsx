@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import ContactForm from "@/components/ContactForm";
 import CopyButton from "@/components/CopyButton";
 import { PageHero } from "@/components/Blocks";
-import { COMPANY, tel } from "@/lib/content";
+import { COMPANY, TELEGRAM_DISPLAY, TELEGRAM_LINK, tel } from "@/lib/content";
 
 export const metadata: Metadata = { title: "Contact us" };
 
@@ -34,6 +34,8 @@ export default function ContactPage() {
                 <CopyButton text={COMPANY.phoneEnglish} />
               </span>
             </div>
+            <div><span className="k">Telegram</span><span className="v"><a href={TELEGRAM_LINK} target="_blank" rel="noopener noreferrer">{TELEGRAM_DISPLAY}</a><CopyButton text={TELEGRAM_DISPLAY} /></span></div>
+            <div><span className="k">Email</span><span className="v"><a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a><CopyButton text={COMPANY.email} /></span></div>
             <div><span className="k">Website</span><span className="v">{COMPANY.website}</span></div>
             <div><span className="k">Company</span><span className="v">{COMPANY.parent}</span></div>
             <div><span className="k">Registered in</span><span className="v">{COMPANY.registeredIn} · No. {COMPANY.registrationNo}</span></div>

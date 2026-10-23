@@ -28,7 +28,7 @@ export default function WhoWeServePage() {
             <Rule />
             <p style={{ marginBottom: 12 }}>We welcome collaboration with:</p>
             <ul>{PARTNERS.map((x) => <li key={x}>{x}</li>)}</ul>
-            <Link className="btn btn-navy mt" href="/contact#enquiry">Become a partner</Link>
+            <Link className="btn btn-red mt" href="/partner">Become a partner</Link>
           </div>
         </div>
       </section>

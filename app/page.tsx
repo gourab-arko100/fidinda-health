@@ -23,11 +23,6 @@ export default function Home() {
               <Link className="btn btn-red" href="/contact#enquiry">Share your medical records</Link>
               <Link className="btn btn-ghost" href="/services">Our services</Link>
             </div>
-            <div className="facts">
-              <span>Support in Khmer &amp; English</span>
-              <span>Second opinions</span>
-              <span>Visa, travel &amp; stay</span>
-            </div>
           </div>
           <RouteBoard />
         </div>

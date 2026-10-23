@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { COMPANY, FAQ, WHATSAPP, tel } from "@/lib/content";
+import { COMPANY, FAQ, TELEGRAM_LINK, WHATSAPP, tel } from "@/lib/content";
 import Icon from "./Icon";
 
 // FAQ block for the home page: topic tabs on the left, questions on the right.
@@ -44,6 +44,7 @@ export default function FaqSection() {
             <p>Talk to a coordinator in Khmer or English.</p>
             <div className="btns">
               <a className="btn btn-wa" href={`https://wa.me/${WHATSAPP}`} target="_blank" rel="noopener noreferrer">WhatsApp us</a>
+              <a className="btn btn-tg" href={TELEGRAM_LINK} target="_blank" rel="noopener noreferrer">Telegram us</a>
               <a className="btn btn-ghost" href={tel(COMPANY.phoneKhmer)}>Call {COMPANY.phoneKhmer}</a>
             </div>
           </div>

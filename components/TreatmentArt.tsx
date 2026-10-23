@@ -5,8 +5,8 @@ export type ArtName =
   | "heart" | "cancer" | "brain" | "bone" | "liver" | "kidney"
   | "women" | "child" | "dental" | "diabetes" | "checkup" | "rehab";
 
-const NAVY = "#1D0C59";
-const RED = "#CA162F";
+const NAVY = "#1C095A";
+const RED = "#E1041C";
 const PINK = "#F6C3CC";
 const S = { stroke: NAVY, strokeWidth: 3, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
 
@@ -24,7 +24,7 @@ function Scene({ name, id }: { name: ArtName; id: string }) {
     case "cancer":
       return (
         <>
-          <path d="M160 40 C180 40 190 60 180 80 L140 152" fill="none" stroke="#9E1027" strokeWidth="17" strokeLinecap="round" />
+          <path d="M160 40 C180 40 190 60 180 80 L140 152" fill="none" stroke="#A80315" strokeWidth="17" strokeLinecap="round" />
           <path d="M160 40 C140 40 130 60 140 80 L180 152" fill="none" stroke={red} strokeWidth="17" strokeLinecap="round" />
           <path d="M150 52 C146 58 146 66 150 72" fill="none" stroke="#fff" strokeOpacity=".6" strokeWidth="4" strokeLinecap="round" />
           {[[98, 60, 7], [84, 112, 5], [226, 58, 6], [238, 116, 8], [110, 140, 4], [214, 146, 5]].map(([x, y, r]) => (
@@ -60,7 +60,7 @@ function Scene({ name, id }: { name: ArtName; id: string }) {
       return (
         <>
           <path d="M84 72 C118 48 212 42 234 62 C247 75 238 97 214 101 C186 106 162 130 128 130 C96 130 72 98 84 72 Z" fill={red} />
-          <path d="M160 52 C156 76 164 100 158 124" fill="none" stroke="#7E0C20" strokeWidth="3" strokeLinecap="round" />
+          <path d="M160 52 C156 76 164 100 158 124" fill="none" stroke="#860212" strokeWidth="3" strokeLinecap="round" />
           <path d="M100 76 C112 64 130 60 146 60" fill="none" stroke="#fff" strokeOpacity=".5" strokeWidth="5" strokeLinecap="round" />
           <ellipse cx="176" cy="118" rx="10" ry="14" fill={NAVY} transform="rotate(-20 176 118)" />
         </>
@@ -162,15 +162,15 @@ function Scene({ name, id }: { name: ArtName; id: string }) {
 export default function TreatmentArt({ name, title }: { name: ArtName; title: string }) {
   const id = `ta-${name}`;
   return (
-    <svg className="tart" viewBox="0 0 320 180" role="img" aria-label={`Illustration: ${title}`}>
+    <svg className="tart" viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" role="img" aria-label={`Illustration: ${title}`}>
       <defs>
         <linearGradient id={`${id}-bg`} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" style={{ stopColor: "var(--ta-a)" }} />
           <stop offset="1" style={{ stopColor: "var(--ta-b)" }} />
         </linearGradient>
         <linearGradient id={`${id}-red`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#E63A52" />
-          <stop offset="1" stopColor="#A90F25" />
+          <stop offset="0" stopColor="#EF2A40" />
+          <stop offset="1" stopColor="#B50316" />
         </linearGradient>
       </defs>
       <rect width="320" height="180" fill={`url(#${id}-bg)`} />

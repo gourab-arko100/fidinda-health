@@ -2,46 +2,34 @@
 
 import { FormEvent, useRef, useState } from "react";
 import Flag from "./Flag";
-import { AREAS, COMPANY, DESTINATIONS, WHATSAPP } from "@/lib/content";
+import { AREAS, COMPANY, DESTINATIONS, TELEGRAM_DISPLAY, TELEGRAM_LINK } from "@/lib/content";
 
 type Errors = Partial<Record<"name" | "phone" | "email" | "consent" | "files", string>>;
 
-// Documents: optional, up to 5 files of 10 MB each (WhatsApp accepts much larger, but this keeps sharing reliable)
+// Documents: optional, up to 5 files of 4 MB each (each one is sent to Telegram separately)
 const MAX_FILES = 5;
-const MAX_MB = 10;
+const MAX_MB = 4;
 const ACCEPT = ".pdf,.jpg,.jpeg,.png,.heic,.doc,.docx";
 const ACCEPT_RE = /\.(pdf|jpe?g|png|heic|docx?)$/i;
 const fmtSize = (b: number) => (b > 1048576 ? `${(b / 1048576).toFixed(1)} MB` : `${Math.max(1, Math.round(b / 1024))} KB`);
 
-// Builds the WhatsApp message. *text* shows as bold in WhatsApp.
-function buildMessage(d: Record<string, string>, fileNames: string[] = []) {
-  const lines = [
-    "*New patient enquiry*",
-    "",
-    `*Name:* ${d.name.trim()}`,
-    `*Phone / Telegram:* ${d.phone.trim()}`,
-    d.email?.trim() ? `*Email:* ${d.email.trim()}` : "",
-    `*Preferred language:* ${d.language || "Khmer"}`,
-    `*Treatment area:* ${d.area || "Not sure yet"}`,
-    `*Preferred destination:* ${d.destination || "No preference"}`,
-    d.message?.trim() ? `\n*About the condition:*\n${d.message.trim()}` : "",
-    fileNames.length
-      ? `\n*Documents (${fileNames.length}):* I will send these in this chat next:\n${fileNames.map((n) => `- ${n}`).join("\n")}`
-      : "",
-    "",
-    "I agree that Fidinda Health Solutions may share my medical documents with selected hospitals for review.",
-  ];
-  return lines.filter((l, i) => l !== "" || i === 1 || i === lines.length - 2).join("\n");
-}
+type FileState = "waiting" | "sending" | "sent" | "failed";
+
+const TgIcon = ({ size = 20 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M21 4L3 11l6 2 2 6 3-4 5 4 2-15z" /><path d="M9 13l9-6-7 8" />
+  </svg>
+);
 
 export default function ContactForm() {
   const [errors, setErrors] = useState<Errors>({});
-  const [waLink, setWaLink] = useState<string | null>(null);
   const [files, setFiles] = useState<File[]>([]);
-  const [sentFiles, setSentFiles] = useState<File[]>([]);
-  const [canShareFiles, setCanShareFiles] = useState(false);
-  const [shareState, setShareState] = useState<"idle" | "shared" | "failed">("idle");
   const [dragging, setDragging] = useState(false);
+  const [phase, setPhase] = useState<"form" | "sending" | "done">("form");
+  const [failed, setFailed] = useState(false);
+  const [ref, setRef] = useState("");
+  const [sentFiles, setSentFiles] = useState<File[]>([]);
+  const [fileStates, setFileStates] = useState<FileState[]>([]);
   const fileInput = useRef<HTMLInputElement>(null);
 
   function addFiles(list: FileList | null) {
@@ -53,8 +41,8 @@ export default function ContactForm() {
       .filter((f, i, arr) => arr.findIndex((g) => g.name === f.name && g.size === f.size) === i);
     let msg = "";
     if (bad) msg = `${bad.name} can't be added. Use PDF, JPG, PNG, HEIC or Word files.`;
-    else if (big) msg = `${big.name} is larger than ${MAX_MB} MB. Send it in WhatsApp directly after your enquiry.`;
-    else if (merged.length > MAX_FILES) msg = `You can add up to ${MAX_FILES} files here. Send any others in the WhatsApp chat.`;
+    else if (big) msg = `${big.name} is larger than ${MAX_MB} MB. Send it to us on Telegram after your enquiry.`;
+    else if (merged.length > MAX_FILES) msg = `You can add up to ${MAX_FILES} files here. Send any others to us on Telegram.`;
     setFiles(merged.slice(0, MAX_FILES));
     setErrors((e) => ({ ...e, files: msg }));
     if (fileInput.current) fileInput.current.value = "";
@@ -65,19 +53,11 @@ export default function ContactForm() {
     setErrors((e) => ({ ...e, files: "" }));
   }
 
-  async function shareDocuments() {
-    try {
-      await navigator.share({ files: sentFiles, title: "Medical documents", text: "Medical documents for my Fidinda enquiry" });
-      setShareState("shared");
-    } catch (err) {
-      if ((err as DOMException)?.name !== "AbortError") setShareState("failed");
-    }
-  }
-
-  function onSubmit(e: FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
     const data = Object.fromEntries(new FormData(form)) as Record<string, string>;
+    delete (data as Record<string, unknown>).documents;
 
     const next: Errors = {};
     if (!data.name?.trim()) next.name = "Enter the patient's name.";
@@ -87,77 +67,94 @@ export default function ContactForm() {
     setErrors(next);
     if (Object.keys(next).length) return;
 
-    const fileNames = files.map((f) => f.name);
-    const link = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(buildMessage(data, fileNames))}`;
+    setFailed(false);
+    setPhase("sending");
+    const docs = files;
+    setSentFiles(docs);
+    setFileStates(docs.map(() => "waiting"));
 
-    // Backup copy on the server, so an enquiry is not lost if the patient never taps Send in WhatsApp.
-    // keepalive lets the request finish even while the browser switches to WhatsApp.
-    fetch("/api/enquiry", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...data, documents: fileNames }),
-      keepalive: true,
-    }).catch(() => {});
+    // 1. The enquiry itself
+    let reference = "";
+    try {
+      const res = await fetch("/api/enquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...data, documents: docs.map((f) => f.name) }),
+      });
+      const out = await res.json().catch(() => ({}));
+      if (!res.ok || !out.ok) throw new Error();
+      reference = out.ref;
+      setRef(reference);
+    } catch {
+      setFailed(true);
+      setPhase("form");
+      return;
+    }
 
-    // Open WhatsApp straight away (inside the click, so pop-up blockers allow it).
-    window.open(link, "_blank", "noopener");
+    // 2. Each document, one at a time
+    for (let i = 0; i < docs.length; i++) {
+      setFileStates((s) => s.map((v, j) => (j === i ? "sending" : v)));
+      const body = new FormData();
+      body.append("ref", reference);
+      body.append("name", data.name.trim());
+      body.append("file", docs[i], docs[i].name);
+      let ok = false;
+      try {
+        const res = await fetch("/api/enquiry/file", { method: "POST", body });
+        ok = res.ok;
+      } catch {
+        ok = false;
+      }
+      setFileStates((s) => s.map((v, j) => (j === i ? (ok ? "sent" : "failed") : v)));
+    }
+
     form.reset();
-    setSentFiles(files);
-    setCanShareFiles(files.length > 0 && typeof navigator !== "undefined" && !!navigator.canShare?.({ files }));
-    setShareState("idle");
     setFiles([]);
-    setWaLink(link);
+    setPhase("done");
   }
 
-  if (waLink) {
+  if (phase !== "form") {
+    const sending = phase === "sending";
+    const anyFailed = fileStates.includes("failed");
     return (
       <div className="done">
-        <span className="wa-done-ic" aria-hidden="true">
-          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z" />
-            <path d="M9 8.5c0 3 2.5 5.8 5.5 6.5l1.2-1.4-1.9-1-1 .8a5 5 0 0 1-2.2-2.2l.8-1-1-1.9z" />
-          </svg>
-        </span>
-        <b>One last step: tap Send in WhatsApp</b>
+        <span className={`tg-done-ic${sending ? " busy" : ""}`} aria-hidden="true"><TgIcon size={30} /></span>
+        <b>{sending ? "Sending your enquiry…" : "Thank you. We received your enquiry."}</b>
         <p className="lede" style={{ margin: "0 auto" }}>
-          We opened WhatsApp with your enquiry already written. Press <strong>Send</strong> there and a coordinator will reply in the same chat.
+          {sending
+            ? "Please keep this page open until everything is sent."
+            : "A coordinator will contact you soon on the phone or Telegram number you gave us."}
         </p>
-        <div className="btns" style={{ justifyContent: "center", marginTop: 20 }}>
-          <a className="btn btn-wa" href={waLink} target="_blank" rel="noopener noreferrer">Open WhatsApp again</a>
-          <button className="btn btn-ghost" type="button" onClick={() => setWaLink(null)}>New enquiry</button>
-        </div>
+        {ref && !sending && <p className="ref-chip">Your reference: <code>{ref}</code></p>}
 
         {sentFiles.length > 0 && (
           <div className="doc-step">
-            <span className="doc-step-n">Step 2</span>
-            <h3>Send your {sentFiles.length === 1 ? "document" : `${sentFiles.length} documents`}</h3>
+            <span className="doc-step-n">Documents</span>
             <ul className="file-list">
-              {sentFiles.map((f) => (
-                <li key={f.name + f.size}><span className="file-ext">{f.name.split(".").pop()}</span><span className="file-name">{f.name}</span><span className="file-size">{fmtSize(f.size)}</span></li>
+              {sentFiles.map((f, i) => (
+                <li key={f.name + f.size}>
+                  <span className="file-ext">{f.name.split(".").pop()}</span>
+                  <span className="file-name">{f.name}</span>
+                  <span className={`file-state ${fileStates[i]}`}>
+                    {fileStates[i] === "sent" ? "Sent" : fileStates[i] === "failed" ? "Not sent" : fileStates[i] === "sending" ? "Sending…" : "Waiting"}
+                  </span>
+                </li>
               ))}
             </ul>
-            {canShareFiles ? (
-              <>
-                <button className="btn btn-wa" type="button" onClick={shareDocuments}>
-                  {shareState === "shared" ? "Shared. Send again?" : "Send my documents"}
-                </button>
-                <p className="form-hint">Choose <b>WhatsApp</b>, then the <b>Fidinda Health Solutions</b> chat (it will be at the top).</p>
-              </>
-            ) : (
-              <ol className="attach-steps">
-                <li>In the WhatsApp chat with Fidinda, click the <b>📎 attach</b> (or <b>+</b>) button.</li>
-                <li>Choose <b>Document</b> (or <b>Photos</b> for pictures).</li>
-                <li>Select the files listed above and press <b>Send</b>.</li>
-              </ol>
-            )}
-            {shareState === "failed" && (
-              <p className="err">Your phone couldn&apos;t share the files. Attach them in the WhatsApp chat with the 📎 button instead.</p>
+            {!sending && anyFailed && (
+              <p className="err">
+                Some files didn&apos;t send. Please send them to us on Telegram ({TELEGRAM_DISPLAY}) and mention your reference {ref}.
+              </p>
             )}
           </div>
         )}
-        <p className="note" style={{ marginTop: 20, textAlign: "left" }}>
-          No WhatsApp? Call us on {COMPANY.phoneKhmer} (Khmer) or {COMPANY.phoneEnglish} (English).
-        </p>
+
+        {!sending && (
+          <div className="btns" style={{ justifyContent: "center", marginTop: 20 }}>
+            <a className="btn btn-tg" href={TELEGRAM_LINK} target="_blank" rel="noopener noreferrer"><TgIcon size={18} />Chat with us on Telegram</a>
+            <button className="btn btn-ghost" type="button" onClick={() => { setPhase("form"); setRef(""); setSentFiles([]); }}>New enquiry</button>
+          </div>
+        )}
       </div>
     );
   }
@@ -253,21 +250,23 @@ export default function ContactForm() {
             </ul>
           )}
           <div className="err">{errors.files}</div>
-          <p className="form-hint">Your files stay on your device. After WhatsApp opens, you&apos;ll send them in the same chat.</p>
+          <p className="form-hint">Files are sent securely to our care team with your enquiry. They are not stored on this website.</p>
         </div>
         <label className="check" htmlFor="consent">
           <input type="checkbox" id="consent" name="consent" value="yes" />
           I agree that {COMPANY.name} may share my medical documents with selected hospitals for review.
         </label>
         <div className="err">{errors.consent}</div>
-        <button className="btn btn-wa" type="submit">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z" />
-            <path d="M9 8.5c0 3 2.5 5.8 5.5 6.5l1.2-1.4-1.9-1-1 .8a5 5 0 0 1-2.2-2.2l.8-1-1-1.9z" />
-          </svg>
-          Send enquiry on WhatsApp
+        {failed && (
+          <p className="form-fail">
+            We couldn&apos;t send your enquiry. Please try again, or message us on Telegram ({TELEGRAM_DISPLAY}) or call {COMPANY.phoneEnglish}.
+          </p>
+        )}
+        <button className="btn btn-red" type="submit">
+          <TgIcon />
+          Send enquiry
         </button>
-        <p className="form-hint">WhatsApp opens with your details filled in. Just press Send.</p>
+        <p className="form-hint">Your enquiry goes straight to our care team on Telegram.</p>
       </form>
     </>
   );

@@ -24,8 +24,8 @@ export default function RouteBoard() {
       >
         <defs>
           <linearGradient id="routeGrad" gradientUnits="userSpaceOnUse" x1="300" y1="205" x2="60" y2="60">
-            <stop offset="0" stopColor="#1D0C59" />
-            <stop offset="1" stopColor="#CA162F" />
+            <stop offset="0" stopColor="#1C095A" />
+            <stop offset="1" stopColor="#E1041C" />
           </linearGradient>
         </defs>
         {dots.map((d) => (

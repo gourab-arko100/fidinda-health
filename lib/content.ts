@@ -16,6 +16,7 @@ export const COMPANY = {
   registrationNo: "10003371",
   vatTin: "K007-902305537",
   website: "www.fidindasolutions.com",
+  email: "info@fidindasolutions.com",
   phoneKhmer: "+855 16 812 444",
   phoneEnglish: "+855 17 457 244",
 };
@@ -24,15 +25,21 @@ export const tel = (n: string) => "tel:" + n.replace(/\s/g, "");
 
 // WhatsApp number used by the floating "Chat on WhatsApp" button (digits only, with country code).
 // Change this if Fidinda uses a different WhatsApp number.
-export const WHATSAPP = "8801974015505";
+export const WHATSAPP = "85516812444";
 export const WHATSAPP_TEXT = "Hello, I would like help planning medical treatment abroad.";
+
+// Telegram number for the "Chat on Telegram" buttons.
+// Form submissions go to Telegram through a bot (see README → "Telegram setup").
+export const TELEGRAM = "+85516812444";
+export const TELEGRAM_DISPLAY = "+855 16 812 444";
+export const TELEGRAM_LINK = `https://t.me/${TELEGRAM}`;
 
 // Social media links shown under "Follow us" in the footer.
 // Paste each profile URL; any left empty ("") is hidden automatically.
 export const SOCIAL: { name: "facebook" | "telegram" | "instagram" | "linkedin" | "youtube" | "tiktok" | "maps"; url: string }[] = [
-  { name: "facebook", url: "" },
+  { name: "facebook", url: "https://www.facebook.com/profile.php?id=61591654326318" },
   { name: "telegram", url: "" },
-  { name: "instagram", url: "" },
+  { name: "instagram", url: "https://www.instagram.com/fidinda.solutions" },
   { name: "linkedin", url: "" },
   { name: "youtube", url: "" },
   { name: "tiktok", url: "" },

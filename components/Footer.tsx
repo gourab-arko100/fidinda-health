@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { COMPANY, DESTINATIONS, SOCIAL, WHATSAPP, WHATSAPP_TEXT, tel } from "@/lib/content";
+import { COMPANY, DESTINATIONS, SOCIAL, WHATSAPP, WHATSAPP_TEXT, tel, TELEGRAM_DISPLAY, TELEGRAM_LINK } from "@/lib/content";
 
 // Simple line icons for the "Follow us" row
 const SOCIAL_ICONS: Record<(typeof SOCIAL)[number]["name"], React.ReactNode> = {
@@ -56,6 +56,7 @@ const COLUMNS: { title: string; links: [string, string][] }[] = [
       ["Core Values", "/about#values"],
       ["Who We Serve", "/who-we-serve"],
       ["Partnerships", "/who-we-serve#partners"],
+      ["Become a Partner", "/partner"],
       ["Contact Us", "/contact"],
       ["Our Role", "/about#role"],
     ],
@@ -82,6 +83,8 @@ export default function Footer() {
               <ul className="ft-contact">
                 <li><b>Call (Khmer)</b> <a href={tel(COMPANY.phoneKhmer)}>{COMPANY.phoneKhmer}</a></li>
                 <li><b>Call (English)</b> <a href={tel(COMPANY.phoneEnglish)}>{COMPANY.phoneEnglish}</a></li>
+                <li><b>Telegram</b> <a href={TELEGRAM_LINK} target="_blank" rel="noopener noreferrer">{TELEGRAM_DISPLAY}</a></li>
+                <li><b>Email</b> <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a></li>
                 <li><b>{COMPANY.website}</b></li>
                 <li className="ft-place">{COMPANY.registeredIn}</li>
               </ul>
@@ -142,15 +145,21 @@ export default function Footer() {
             </svg>
           </span>
         </Link>
-        <a className="fab-btn fab-wa" href={waLink} target="_blank" rel="noopener noreferrer">
-          Chat on WhatsApp
-          <span className="fab-ic" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z" />
-              <path d="M9 8.5c0 3 2.5 5.8 5.5 6.5l1.2-1.4-1.9-1-1 .8a5 5 0 0 1-2.2-2.2l.8-1-1-1.9z" />
-            </svg>
-          </span>
-        </a>
+        <div className="fab-row">
+          <a className="fab-btn fab-wa" href={waLink} target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+            <span className="fab-label">WhatsApp</span>
+            <span className="fab-ic" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z" />
+                <path d="M9 8.5c0 3 2.5 5.8 5.5 6.5l1.2-1.4-1.9-1-1 .8a5 5 0 0 1-2.2-2.2l.8-1-1-1.9z" />
+              </svg>
+            </span>
+          </a>
+          <a className="fab-btn fab-tg" href={TELEGRAM_LINK} target="_blank" rel="noopener noreferrer" aria-label="Chat on Telegram">
+            <span className="fab-label">Telegram</span>
+            <span className="fab-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M21 4L3 11l6 2 2 6 3-4 5 4 2-15z" /><path d="M9 13l9-6-7 8" /></svg></span>
+          </a>
+        </div>
       </div>
     </>
   );

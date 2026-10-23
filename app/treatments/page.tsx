@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import path from "node:path";
 import type { Metadata } from "next";
 import { CtaBand, PageHero, Rule } from "@/components/Blocks";
 import Image from "next/image";
@@ -7,6 +9,32 @@ import TreatmentArt from "@/components/TreatmentArt";
 import { AREAS } from "@/lib/content";
 
 export const metadata: Metadata = { title: "Treatment areas" };
+
+// Photo file names. Drop a photo with this name into public/treatments/ (jpg, jpeg, png or webp)
+// and its card shows the photo instead of the illustration. No code changes needed.
+const PHOTO_NAMES: Record<string, string> = {
+  heart: "cardiology",
+  cancer: "oncology",
+  brain: "neurology",
+  bone: "orthopaedics",
+  liver: "gastroenterology",
+  kidney: "urology",
+  women: "womens-health",
+  child: "paediatrics",
+  dental: "dental-ent-eye",
+  diabetes: "diabetes",
+  checkup: "health-checkup",
+  rehab: "rehabilitation",
+};
+
+function findPhoto(art: string): string | null {
+  const name = PHOTO_NAMES[art];
+  if (!name) return null;
+  for (const ext of ["jpg", "jpeg", "png", "webp"]) {
+    if (fs.existsSync(path.join(process.cwd(), "public", "treatments", `${name}.${ext}`))) return `/treatments/${name}.${ext}`;
+  }
+  return null;
+}
 
 const ROWS = [
   ["Proposed treatment", "From hospital", "From hospital", "From hospital"],
@@ -30,22 +58,25 @@ export default function TreatmentsPage() {
       <section className="band">
         <div className="wrap">
           <div className="areas">
-            {AREAS.map((a) => (
-              <article className="area area-pic" key={a.title}>
-                <div className="area-media">
-                  {a.image ? (
-                    <Image src={a.image} alt={a.title} fill sizes="(max-width: 600px) 100vw, (max-width: 960px) 50vw, 25vw" style={{ objectFit: "cover" }} />
-                  ) : (
-                    <TreatmentArt name={a.art} title={a.title} />
-                  )}
-                </div>
-                <div className="area-body">
-                  <h3>{a.title}</h3>
-                  <p>{a.text}</p>
-                  <Link className="area-link" href="/contact#enquiry">Ask about this <Icon name="arrow" size={15} /></Link>
-                </div>
-              </article>
-            ))}
+            {AREAS.map((a) => {
+              const photo = a.image ?? findPhoto(a.art);
+              return (
+                <article className={`area area-pic${photo ? " has-photo" : ""}`} key={a.title}>
+                  <div className="area-media">
+                    {photo ? (
+                      <Image src={photo} alt={a.title} fill sizes="(max-width: 600px) 100vw, (max-width: 960px) 50vw, 33vw" style={{ objectFit: "cover" }} />
+                    ) : (
+                      <TreatmentArt name={a.art} title={a.title} />
+                    )}
+                  </div>
+                  <div className="area-body">
+                    <h3>{a.title}</h3>
+                    <p>{a.text}</p>
+                    <Link className="area-link" href="/contact#enquiry">Ask about this <Icon name="arrow" size={15} /></Link>
+                  </div>
+                </article>
+              );
+            })}
           </div>
         </div>
       </section>
