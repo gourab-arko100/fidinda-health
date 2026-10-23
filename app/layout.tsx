@@ -14,7 +14,6 @@ export const metadata: Metadata = {
   title: { default: `${COMPANY.name} | ${COMPANY.tagline}`, template: `%s | ${COMPANY.name}` },
   description:
     "Fidinda Health Solutions helps Cambodian patients and families find, plan and manage medical treatment abroad, with support for records, second opinions, hospital options, visas, travel and follow-up.",
-  icons: { icon: "/logo.png" },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
