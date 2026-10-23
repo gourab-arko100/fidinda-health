@@ -42,7 +42,7 @@ export const SOCIAL: { name: "facebook" | "telegram" | "instagram" | "linkedin" 
   { name: "instagram", url: "https://www.instagram.com/fidinda.solutions" },
   { name: "linkedin", url: "" },
   { name: "youtube", url: "" },
-  { name: "tiktok", url: "" },
+  { name: "tiktok", url: "https://www.tiktok.com/@fidinda.solutions" },
   { name: "maps", url: "" },
 ];
 
