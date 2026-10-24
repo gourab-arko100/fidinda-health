@@ -41,7 +41,56 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="band sunk" id="group">
+
+      <section className="band sunk">
+        <div className="wrap">
+          <span className="kicker">Direction</span>
+          <h2>Vision &amp; Mission</h2>
+          <Rule aqua />
+          <div className="vm mt">
+            <div className="vision">
+              <span className="lbl">VISION</span>
+              <p>
+                To become Cambodia&apos;s trusted partner for medical value tourism by connecting patients with quality
+                healthcare options abroad through care, transparency and professional guidance.
+              </p>
+            </div>
+            <div className="mission">
+              <span className="lbl">MISSION</span>
+              <p>
+                To help Cambodian patients and their families access suitable international hospitals, specialist doctors
+                and treatment options through ethical facilitation, transparent communication, personalised support and
+                end-to-end coordination.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="band" id="values">
+        <div className="wrap">
+          <span className="kicker">What guides us</span>
+          <h2>Our core values</h2>
+          <Rule />
+          <div className="values mt">
+            {VALUES.map((v) => (
+              <div className={`value${v.solid ? " solid" : ""}`} key={v.title}>
+                <div className="dia" />
+                <h3>{v.title}</h3>
+                <i />
+                <p>{v.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="band sunk tight" id="role">
+        <div className="wrap">
+          <RoleNote />
+        </div>
+      </section>
+      <section className="band" id="group">
         <div className="wrap split eco">
           <div>
             <span className="kicker lined">Our position within Fidinda Solutions</span>
@@ -68,55 +117,6 @@ export default function AboutPage() {
               ))}
             </ul>
           </div>
-        </div>
-      </section>
-
-      <section className="band">
-        <div className="wrap">
-          <span className="kicker">Direction</span>
-          <h2>Vision &amp; Mission</h2>
-          <Rule aqua />
-          <div className="vm mt">
-            <div className="vision">
-              <span className="lbl">VISION</span>
-              <p>
-                To become Cambodia&apos;s trusted partner for medical value tourism by connecting patients with quality
-                healthcare options abroad through care, transparency and professional guidance.
-              </p>
-            </div>
-            <div className="mission">
-              <span className="lbl">MISSION</span>
-              <p>
-                To help Cambodian patients and their families access suitable international hospitals, specialist doctors
-                and treatment options through ethical facilitation, transparent communication, personalised support and
-                end-to-end coordination.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="band sunk" id="values">
-        <div className="wrap">
-          <span className="kicker">What guides us</span>
-          <h2>Our core values</h2>
-          <Rule />
-          <div className="values mt">
-            {VALUES.map((v) => (
-              <div className={`value${v.solid ? " solid" : ""}`} key={v.title}>
-                <div className="dia" />
-                <h3>{v.title}</h3>
-                <i />
-                <p>{v.text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="band tight" id="role">
-        <div className="wrap">
-          <RoleNote />
         </div>
       </section>
 
