@@ -75,7 +75,8 @@ export default function Header() {
       <header className={`site${scrolled ? " scrolled" : ""}`}>
         <div className="wrap nav">
           <Link className="logo" href="/" aria-label={`${COMPANY.name} home`}>
-            <Image src="/logo.png" alt={COMPANY.name} width={664} height={164} priority style={{ height: 42, width: "auto" }} />
+            <Image className="logo-light" src="/logo-header-light.png" alt={COMPANY.name} width={1234} height={240} priority style={{ height: 40, width: "auto" }} />
+            <Image className="logo-dark" src="/logo-header-dark.png" alt="" aria-hidden="true" width={1234} height={240} priority style={{ height: 40, width: "auto" }} />
           </Link>
 
           <nav className="links" aria-label="Main">
@@ -115,7 +116,7 @@ export default function Header() {
 
           <div className="nav-cta">
             <ThemeToggle />
-            <Link className="btn btn-red" href="/contact#enquiry">Get support</Link>
+            <Link className="btn btn-red nav-btn" href="/contact#enquiry">Get support <Icon name="arrow" size={16} /></Link>
             <button
               className="burger"
               type="button"

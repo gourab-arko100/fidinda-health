@@ -824,3 +824,71 @@ footer.ft{background:#1C095A;color:#C9C3E6;padding-block:56px 40px;font-size:.95
 .eco-tree li.here{background:rgba(225,4,28,.07);border-color:var(--red)}
 .here-tag{flex:none;background:var(--red);color:#FFFFFF;font:800 .7rem var(--f-display);letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;border-radius:999px}
 @media (max-width:420px){.eco-tree li{flex-wrap:wrap}}
+
+/* =====================================================================
+   Header — dark navy bar with white logo (matches Fidinda Travel)
+   ===================================================================== */
+header.site{background:linear-gradient(90deg,#14063F 0%,#1C095A 45%,#2A137A 100%);border-bottom:none;box-shadow:none}
+header.site::after{display:none}
+header.site.scrolled{box-shadow:0 10px 30px rgba(10,4,40,.35)}
+header.site .nav{height:84px}
+header.site .logo{background:transparent;padding:0;border-radius:0}
+header.site .links{gap:26px}
+header.site .links a,header.site .links .drop-btn{color:rgba(255,255,255,.88);font-weight:600;font-size:.95rem;padding-block:8px;border-bottom:2px solid transparent}
+header.site .links a:hover,header.site .links .drop-btn:hover,header.site .links .drop-btn[aria-expanded="true"]{color:#FFFFFF}
+header.site .links a[aria-current="page"],header.site .links .drop-btn.active{color:#FFFFFF;border-color:var(--brand-red)}
+header.site .theme-btn{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.25);color:#FFFFFF}
+header.site .theme-btn:hover{background:rgba(255,255,255,.16)}
+header.site .burger{border-color:rgba(255,255,255,.3);color:#FFFFFF}
+header.site .nav-btn{padding:13px 24px;font-size:.95rem;gap:10px}
+header.site .nav-btn svg{transition:transform .2s}
+header.site .nav-btn:hover svg{transform:translateX(3px)}
+header.site .mobile{border-top:1px solid rgba(255,255,255,.12)}
+header.site .mobile a,header.site .mobile .row-btn{color:#FFFFFF;border-bottom-color:rgba(255,255,255,.12)}
+header.site .mobile .sub a{color:rgba(255,255,255,.72)}
+header.site .mobile a[aria-current="page"]{color:#FF7A8A}
+header.site .mobile .btn-navy{background:var(--grad-red);color:#FFFFFF}
+header.site .mobile .btn-ghost{color:#FFFFFF}
+@media (max-width:1280px){header.site .links{gap:18px}header.site .links a,header.site .links .drop-btn{font-size:.9rem}}
+header.site .nav-btn{white-space:nowrap;flex:none}
+header.site .nav{gap:20px}
+@media (max-width:1440px){header.site .links{gap:20px}}
+@media (max-width:1366px){header.site .links{gap:16px}header.site .links a,header.site .links .drop-btn{font-size:.88rem}header.site .nav-btn{padding:12px 18px}header.site .logo img{height:36px!important}}
+@media (max-width:1260px){header.site .links{display:none}header.site .burger{display:inline-grid;place-items:center}}
+
+/* =====================================================================
+   Header — white bar, colour logo, navy links (matches Fidinda Travel)
+   Overrides the dark navy header above.
+   ===================================================================== */
+header.site{background:var(--surface);box-shadow:0 6px 24px rgba(28,9,90,.08)}
+header.site.scrolled{box-shadow:0 8px 30px rgba(28,9,90,.13)}
+:root[data-theme="dark"] header.site{box-shadow:0 6px 24px rgba(0,0,0,.4)}
+header.site .logo-dark{display:none}
+:root[data-theme="dark"] header.site .logo-light{display:none}
+:root[data-theme="dark"] header.site .logo-dark{display:block}
+header.site .links a,header.site .links .drop-btn{color:var(--brand);font-weight:500}
+header.site .links a:hover,header.site .links .drop-btn:hover,header.site .links .drop-btn[aria-expanded="true"]{color:var(--red)}
+header.site .links a[aria-current="page"],header.site .links .drop-btn.active{color:var(--brand);border-color:var(--brand-red)}
+header.site .theme-btn{background:var(--surface);border-color:var(--line);color:var(--brand)}
+header.site .theme-btn:hover{background:var(--sunk)}
+header.site .burger{border-color:var(--line);color:var(--ink)}
+header.site .nav-btn{box-shadow:0 8px 20px rgba(225,4,28,.28)}
+header.site .mobile{border-top:1px solid var(--line)}
+header.site .mobile a,header.site .mobile .row-btn{color:var(--ink);border-bottom-color:var(--line)}
+header.site .mobile .sub a{color:var(--muted)}
+header.site .mobile a[aria-current="page"]{color:var(--red)}
+header.site .mobile .btn-ghost{color:var(--ink)}
+
+/* Floating buttons: three equal pills stacked in one column */
+.fab{align-items:stretch;gap:10px}
+.fab-row{display:flex;flex-direction:column;gap:10px}
+.fab .fab-btn,.fab-row .fab-btn{justify-content:space-between;width:224px;padding:8px 8px 8px 22px;gap:12px;font-size:.95rem}
+.fab .fab-ic,.fab-row .fab-ic{width:36px;height:36px}
+.fab-row .fab-btn:nth-child(1){animation-delay:1.25s}
+.fab-row .fab-btn:nth-child(2){animation-delay:1.4s}
+@media (max-width:560px){
+  .fab{align-items:flex-end}
+  .fab .fab-btn,.fab-row .fab-btn{width:auto;padding:6px}
+  .fab .fab-label{display:none}
+  .fab .fab-ic{width:40px;height:40px}
+}
