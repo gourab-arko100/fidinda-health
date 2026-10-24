@@ -807,3 +807,20 @@ footer.ft{background:#1C095A;color:#C9C3E6;padding-block:56px 40px;font-size:.95
 .fab-tg .fab-ic{background:rgba(255,255,255,.2)}
 .fab-row .fab-btn:nth-child(2){animation-delay:1.35s}
 @media (max-width:560px){.fab-row .fab-label{display:none}.fab-row .fab-btn{padding:6px}}
+
+/* =====================================================================
+   About: position within Fidinda Solutions
+   ===================================================================== */
+.kicker.lined{display:flex;align-items:center;gap:12px}
+.kicker.lined::before{content:"";width:28px;height:2px;background:var(--red);flex:none}
+.split.eco{align-items:center}
+.eco-card{background:var(--surface);border-radius:18px;padding:clamp(20px,3vw,32px);box-shadow:var(--shadow)}
+.eco-parent{background:var(--brand-navy);color:#FFFFFF;text-align:center;font:800 1.05rem var(--f-display);padding:18px 16px;border-radius:8px}
+:root[data-theme="dark"] .eco-parent{box-shadow:0 0 0 1px rgba(255,255,255,.12)}
+.eco-tree{list-style:none;margin:0;padding:30px 0 0 28px;position:relative;display:grid;gap:12px}
+.eco-tree::before{content:"";position:absolute;left:12px;top:0;bottom:29px;width:1px;background:var(--line)}
+.eco-tree li{position:relative;display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:56px;padding:12px 18px;border:1px solid var(--line);border-radius:6px;background:var(--surface);font:600 1rem var(--f-display);color:var(--brand)}
+.eco-tree li::before{content:"";position:absolute;left:-17px;top:50%;width:16px;height:1px;background:var(--line)}
+.eco-tree li.here{background:rgba(225,4,28,.07);border-color:var(--red)}
+.here-tag{flex:none;background:var(--red);color:#FFFFFF;font:800 .7rem var(--f-display);letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;border-radius:999px}
+@media (max-width:420px){.eco-tree li{flex-wrap:wrap}}

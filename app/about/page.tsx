@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { CtaBand, PageHero, RoleNote, Rule } from "@/components/Blocks";
-import { COMPANY, VALUES } from "@/lib/content";
+import { COMPANY, FIDINDA_GROUP, VALUES } from "@/lib/content";
 
 export const metadata: Metadata = { title: "About us" };
 
@@ -41,7 +41,37 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="band sunk">
+      <section className="band sunk" id="group">
+        <div className="wrap split eco">
+          <div>
+            <span className="kicker lined">Our position within Fidinda Solutions</span>
+            <h2>Part of a wider service group</h2>
+            <Rule />
+            <p className="lede">
+              Fidinda Health Solutions works alongside Fidinda Financial Solutions, Fidinda Management Solutions and Fidinda
+              Travel Solutions. Being part of one group lets us coordinate smoothly when a family needs more than one kind of
+              support, while each division stays focused on its own specialist service.
+            </p>
+            <p className="lede">
+              Medical travel facilitation is handled by our health team. Travel, financial and management services are handled by
+              their own teams, so every part of your journey is looked after by the right people.
+            </p>
+          </div>
+          <div className="eco-card" aria-label="Fidinda Solutions group structure">
+            <div className="eco-parent">{FIDINDA_GROUP.parent}</div>
+            <ul className="eco-tree">
+              {FIDINDA_GROUP.divisions.map((d) => (
+                <li key={d} className={d === FIDINDA_GROUP.current ? "here" : undefined} aria-current={d === FIDINDA_GROUP.current ? "true" : undefined}>
+                  <span>{d}</span>
+                  {d === FIDINDA_GROUP.current && <span className="here-tag">You are here</span>}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section className="band">
         <div className="wrap">
           <span className="kicker">Direction</span>
           <h2>Vision &amp; Mission</h2>
@@ -66,7 +96,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="band" id="values">
+      <section className="band sunk" id="values">
         <div className="wrap">
           <span className="kicker">What guides us</span>
           <h2>Our core values</h2>
@@ -84,7 +114,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="band sunk tight" id="role">
+      <section className="band tight" id="role">
         <div className="wrap">
           <RoleNote />
         </div>
