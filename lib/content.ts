@@ -25,7 +25,7 @@ export const tel = (n: string) => "tel:" + n.replace(/\s/g, "");
 
 // WhatsApp number used by the floating "Chat on WhatsApp" button (digits only, with country code).
 // Change this if Fidinda uses a different WhatsApp number.
-export const WHATSAPP = "85516812444";
+export const WHATSAPP = "85517457244";
 export const WHATSAPP_TEXT = "Hello, I would like help planning medical treatment abroad.";
 
 // Telegram number for the "Chat on Telegram" buttons.
